@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Athlete.OS - Seu Painel de Performance</title>
+    <title>Athlete.OS - Ultimate Performance Control</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,6 +15,12 @@
     <style>
       body {
         font-family: "Inter", sans-serif;
+      }
+      .page-content {
+        display: none;
+      }
+      .page-content.active {
+        display: block;
       }
     </style>
   </head>
@@ -36,38 +42,55 @@
             >
           </div>
 
-          <nav class="space-y-1">
+          <nav class="space-y-1" id="main-navigation">
             <a
               href="#dashboard"
-              class="flex items-center gap-3 px-4 py-3 bg-indigo-600/10 text-indigo-400 rounded-xl font-medium border border-indigo-500/20 transition"
+              data-target="page-dashboard"
+              class="nav-link flex items-center gap-3 px-4 py-3 text-indigo-400 bg-indigo-600/10 rounded-xl font-medium border border-indigo-500/20 transition"
             >
               <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Visão Geral
             </a>
             <a
               href="#academia"
-              class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200 rounded-xl font-medium transition"
+              data-target="page-academia"
+              class="nav-link flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200 rounded-xl font-medium transition"
             >
               <i data-lucide="dumbbell" class="w-5 h-5"></i> Prep. Física /
               Academia
             </a>
             <a
               href="#dieta"
-              class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200 rounded-xl font-medium transition"
+              data-target="page-dieta"
+              class="nav-link flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200 rounded-xl font-medium transition"
             >
               <i data-lucide="apple" class="w-5 h-5"></i> Plano Alimentar
             </a>
           </nav>
         </div>
 
-        <div class="pt-4 border-t border-slate-800 flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-full bg-indigo-950 border border-indigo-500/30 flex items-center justify-center font-bold text-indigo-400"
+        <div class="pt-4 border-t border-slate-800">
+          <label
+            class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2"
+            >Sincronizar Arquivo</label
           >
-            BJJ
-          </div>
-          <div>
-            <p class="text-sm font-semibold">Atleta de Jiu-Jitsu</p>
-            <p class="text-xs text-slate-500">Modo Competição</p>
+          <div
+            id="dropzone"
+            class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer transition bg-slate-900/30"
+          >
+            <input
+              type="file"
+              id="pdf-input"
+              accept=".pdf,.txt"
+              class="hidden"
+            />
+            <i
+              data-lucide="upload-cloud"
+              class="w-6 h-6 mx-auto text-slate-500 mb-2"
+              id="upload-icon"
+            ></i>
+            <p class="text-xs text-slate-400 font-medium" id="upload-text">
+              Arraste ou clique para sincronizar PDF
+            </p>
           </div>
         </div>
       </aside>
@@ -77,421 +100,94 @@
           class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-6"
         >
           <div>
-            <h1 class="text-3xl font-bold tracking-tight">
-              Painel Integrado: BJJ + Academia
+            <h1 class="text-3xl font-bold tracking-tight" id="main-title">
+              Painel Integrado
             </h1>
-            <p class="text-slate-400 mt-1">
-              Dados estruturados a partir das suas fichas oficiais de treino e
-              nutrição.
+            <p class="text-slate-400 mt-1" id="main-subtitle">
+              Gerencie sua evolução híbrida.
             </p>
           </div>
-          <div class="flex gap-2">
+          <div>
             <div
-              class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-indigo-400 flex items-center gap-2"
+              id="sync-badge"
+              class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 flex items-center gap-2 max-w-fit"
             >
               <span
-                class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"
+                id="sync-dot"
+                class="w-2 h-2 rounded-full bg-slate-600"
               ></span>
-              Sincronizado com PDF
+              <span id="sync-status-text">Aguardando Base de Dados</span>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          <div class="space-y-6">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold flex items-center gap-2">
-                <i data-lucide="dumbbell" class="text-amber-500"></i> Exercícios
-                de Preparação para Jiu-Jitsu
-              </h2>
-              <span
-                class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded border border-slate-800"
-                >12 Pilares</span
-              >
-            </div>
+        <div id="page-dashboard" class="page-content active space-y-6">
+          <div
+            class="bg-gradient-to-br from-indigo-950/40 to-slate-950 border border-slate-800 rounded-2xl p-6 md:p-8"
+          >
+            <h2 class="text-2xl font-bold mb-2">Bem-vindo ao ATHLETE.OS</h2>
+            <p class="text-slate-400 text-sm max-w-2xl">
+              Esta é uma arquitetura SPA nativa. Use o menu lateral para navegar
+              pelas telas ou faça o upload de arquivos de texto/PDF simulados
+              para popular os dados em tempo real.
+            </p>
+          </div>
+        </div>
 
-            <div
-              class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4"
+        <div id="page-academia" class="page-content space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold flex items-center gap-2">
+              <i data-lucide="dumbbell" class="text-amber-500"></i> Preparação
+              Física Cadastrada
+            </h2>
+            <span
+              class="text-xs text-slate-400 font-mono bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg"
+              id="exercise-count"
+              >0 Exercícios</span
             >
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Levantamento Terra</span
-                    >
-                    <span
-                      class="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Força/Lombar</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Crucial para levantadas técnicas e força geral.
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Agachamento Sumô</span
-                    >
-                    <span
-                      class="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Perna/Guarda</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Foca na estabilidade, ótimo para manter a guarda fechada.
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Remada Curvada/Sentada</span
-                    >
-                    <span
-                      class="text-[10px] bg-indigo-500/10 text-indigo-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Costas/Pegada</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Fortalece as costas, melhorando o controle no pano
-                    (quimono).
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Supino Reto</span
-                    >
-                    <span
-                      class="text-[10px] bg-indigo-500/10 text-indigo-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Empurre</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Constrói força, altamente útil para repor a guarda.
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Clean (Olímpico)</span
-                    >
-                    <span
-                      class="text-[10px] bg-red-500/10 text-red-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Potência</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Melhora a potência mecânica e a explosão nos golpes.
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Barras Fixas (Pull-ups)</span
-                    >
-                    <span
-                      class="text-[10px] bg-indigo-500/10 text-indigo-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Tração</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Fortalece diretamente a dorsal e a sustentação da pegada.
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Flexões & Burpees</span
-                    >
-                    <span
-                      class="text-[10px] bg-emerald-500/10 text-emerald-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Cardio/Resist.</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Condicionamento metabólico e resistência de membros
-                    superiores.
-                  </p>
-                </div>
-
-                <div
-                  class="p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-amber-500/30 transition"
-                >
-                  <div class="flex justify-between items-start mb-1">
-                    <span class="font-semibold text-sm text-slate-200"
-                      >Isometria (6 Segundos)</span
-                    >
-                    <span
-                      class="text-[10px] bg-red-500/10 text-red-400 font-bold px-1.5 py-0.5 rounded uppercase"
-                      >Combate</span
-                    >
-                  </div>
-                  <p class="text-xs text-slate-400">
-                    Segurar carga em remadas/agachamentos simulando esforço da
-                    luta.
-                  </p>
-                </div>
-              </div>
-
-              <div
-                class="pt-4 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3"
-              >
-                <div
-                  class="bg-slate-900/40 p-3 rounded-xl border border-slate-800 text-center"
-                >
-                  <span class="text-xs text-slate-400 block mb-1"
-                    >Core/Estabilidade</span
-                  >
-                  <span
-                    class="text-sm font-semibold text-slate-200 flex items-center justify-center gap-1"
-                    ><i
-                      data-lucide="shield"
-                      class="w-4 h-4 text-indigo-400"
-                    ></i>
-                    Prancha</span
-                  >
-                </div>
-                <div
-                  class="bg-slate-900/40 p-3 rounded-xl border border-slate-800 text-center"
-                >
-                  <span class="text-xs text-slate-400 block mb-1"
-                    >Treino de Pegada</span
-                  >
-                  <span
-                    class="text-sm font-semibold text-slate-200 flex items-center justify-center gap-1"
-                    ><i data-lucide="hand" class="w-4 h-4 text-indigo-400"></i>
-                    Kimono na Barra</span
-                  >
-                </div>
-                <div
-                  class="bg-slate-900/40 p-3 rounded-xl border border-slate-800 text-center"
-                >
-                  <span class="text-xs text-slate-400 block mb-1"
-                    >Prevenção de Lesões</span
-                  >
-                  <span
-                    class="text-sm font-semibold text-slate-200 flex items-center justify-center gap-1"
-                    ><i
-                      data-lucide="activity"
-                      class="w-4 h-4 text-emerald-400"
-                    ></i>
-                    Mobilidade Quadril/Ombro</span
-                  >
-                </div>
-              </div>
-            </div>
           </div>
 
-          <div class="space-y-6">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold flex items-center gap-2">
-                <i data-lucide="apple" class="text-emerald-500"></i> Cronograma
-                de Dieta & Janelas Alimentares
-              </h2>
-              <span
-                class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20"
-                >Foco: Performance</span
-              >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="exercise-grid">
+            <div
+              class="col-span-full py-12 text-center border border-slate-800 rounded-2xl bg-slate-950/40 text-slate-500"
+            >
+              <i
+                data-lucide="folder-open"
+                class="w-10 h-10 mx-auto mb-2 opacity-50"
+              ></i>
+              <p class="text-sm">
+                Nenhum exercício carregado. Insira o PDF de exercícios para
+                sincronizar.
+              </p>
             </div>
+          </div>
+        </div>
 
-            <div class="space-y-4">
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start"
-              >
-                <div
-                  class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 font-mono text-xs font-bold text-slate-400 text-center min-w-[65px]"
-                >
-                  07:30
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-slate-200 text-sm">
-                    Café da Manhã
-                    <span class="text-xs font-normal text-slate-400"
-                      >— Energia para o Dia</span
-                    >
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-1">
-                    2 Pães franceses (ótimo combustível) • 3 Ovos inteiros • 1
-                    Fatia de queijo (mussarela ou prato) • Café preto.
-                  </p>
-                </div>
-              </div>
+        <div id="page-dieta" class="page-content space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold flex items-center gap-2">
+              <i data-lucide="apple" class="text-emerald-500"></i> Janelas
+              Nutricionais Estruturadas
+            </h2>
+            <span
+              class="text-xs text-slate-400 font-mono bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg"
+              id="diet-count"
+              >Sem horários</span
+            >
+          </div>
 
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start"
-              >
-                <div
-                  class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 font-mono text-xs font-bold text-slate-400 text-center min-w-[65px]"
-                >
-                  10:30
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-slate-200 text-sm">
-                    Lanche da Manhã
-                    <span class="text-xs font-normal text-slate-400"
-                      >— Sustentação</span
-                    >
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-1">
-                    1 Fruta grande (Banana, Maçã ou Mamão) • 3 colheres de sopa
-                    de Aveia • 1 copo de Iogurte comum.
-                  </p>
-                </div>
-              </div>
-
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start relative border-l-4 border-l-emerald-500"
-              >
-                <div
-                  class="bg-emerald-950/40 p-2.5 rounded-xl border border-emerald-500/20 font-mono text-xs font-bold text-emerald-400 text-center min-w-[65px]"
-                >
-                  12:30
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-emerald-400 text-sm">
-                    Almoço
-                    <span class="text-xs font-normal text-slate-400"
-                      >— "Prato de Pedreiro" da Atleta</span
-                    >
-                  </h4>
-                  <div class="text-xs text-slate-300 mt-1 space-y-0.5">
-                    <p>
-                      • <strong>Arroz:</strong> 3 a 4 colheres de servir (branco
-                      comum).
-                    </p>
-                    <p>
-                      • <strong>Feijão:</strong> 1 concha cheia (essencial
-                      contra anemia/fraqueza).
-                    </p>
-                    <p>
-                      • <strong>Proteína (Mão cheia):</strong> 2 bifes médios
-                      (frango ou patinho/coxão mole/alcatra).
-                    </p>
-                    <p>
-                      • <strong>Salada:</strong> Alface, tomate e cenoura
-                      (azeite e limão) + 1 Laranja de sobremesa (absorção de
-                      ferro).
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start border-l-4 border-l-amber-500"
-              >
-                <div
-                  class="bg-amber-950/40 p-2.5 rounded-xl border border-amber-500/20 font-mono text-xs font-bold text-amber-400 text-center min-w-[65px]"
-                >
-                  16:00
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-amber-400 text-sm">
-                    Pré-Treino
-                    <span class="text-xs font-normal text-slate-400"
-                      >— Foco na Explosão (BJJ)</span
-                    >
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-1">
-                    1 Pão com doce de leite/mel (energia rápida para não apagar
-                    no rola) <strong>OU</strong> 1 Banana amassada com aveia.
-                  </p>
-                  <div
-                    class="mt-2 text-[11px] bg-slate-900 px-2 py-1 rounded border border-slate-800 inline-flex items-center gap-1 font-mono text-slate-300"
-                  >
-                    <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
-                    Suplementação: 5g de Creatina com água
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start"
-              >
-                <div
-                  class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 font-mono text-xs font-bold text-slate-400 text-center min-w-[65px]"
-                >
-                  Imediato
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-slate-200 text-sm">
-                    Pós-Treino
-                    <span class="text-xs font-normal text-slate-400"
-                      >— Recuperação Rápida</span
-                    >
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-1">
-                    1 shake de proteína (Whey) + 1 bananinha passa ou 200ml de
-                    suco de uva integral (repõe o açúcar do músculo rapidamente
-                    para evitar exaustão no dia seguinte).
-                  </p>
-                </div>
-              </div>
-
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start"
-              >
-                <div
-                  class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 font-mono text-xs font-bold text-slate-400 text-center min-w-[65px]"
-                >
-                  20:30
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-slate-200 text-sm">
-                    Jantar
-                    <span class="text-xs font-normal text-slate-400"
-                      >— Recuperação Muscular</span
-                    >
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-1">
-                    2 a 3 colheres de arroz • 2 bifes (frango/carne) ou 3 ovos
-                    cozidos • Batata inglesa ou abóbora • Porção de verdes
-                    (couve, brócolis ou espinafre).
-                  </p>
-                </div>
-              </div>
-
-              <div
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-md flex gap-4 items-start"
-              >
-                <div
-                  class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 font-mono text-xs font-bold text-slate-400 text-center min-w-[65px]"
-                >
-                  Ceia
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold text-slate-200 text-sm">
-                    Antes de Dormir
-                    <span class="text-xs font-normal text-slate-400"
-                      >— Anticatabolismo</span
-                    >
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-1">
-                    1 xícara de leite quente (opcional: canela) • 3 a 4 Bolachas
-                    tipo Maria ou Água e Sal (evita dormir com fome).
-                  </p>
-                </div>
-              </div>
+          <div class="space-y-4" id="diet-timeline">
+            <div
+              class="py-12 text-center border border-slate-800 rounded-2xl bg-slate-950/40 text-slate-500"
+            >
+              <i
+                data-lucide="utensils"
+                class="w-10 h-10 mx-auto mb-2 opacity-50"
+              ></i>
+              <p class="text-sm">
+                Nenhuma refeição encontrada. Insira o PDF da sua dieta para
+                sincronizar.
+              </p>
             </div>
           </div>
         </div>
@@ -499,6 +195,221 @@
     </div>
 
     <script>
+      // Simulação do resultado do Parser do PDF após leitura binária
+      const databaseMock = {
+        exercicios: [
+          {
+            nome: "Levantamento Terra (Deadlift)",
+            desc: "Fortalece lombar e pernas, crucial para levantadas técnicas e força geral.",
+            tag: "Força / Lombar",
+          },
+          {
+            nome: "Agachamento Sumô",
+            desc: "Foca na força de pernas e estabilidade, ótimo para manter a guarda fechada.",
+            tag: "Perna / Guarda",
+          },
+          {
+            nome: "Remada Curvada/Sentada",
+            desc: "Fortalece as costas, melhorando a pegada e controle no pano.",
+            tag: "Costas / Pegada",
+          },
+          {
+            nome: "Supino Reto",
+            desc: "Constrói força, útil para repor guarda.",
+            tag: "Membros Sup.",
+          },
+          {
+            nome: "Clean (Levantamento Olímpico)",
+            desc: "Melhora a potência e explosão.",
+            tag: "Explosão",
+          },
+          {
+            nome: "Barras (Pull-ups)",
+            desc: "Fortalece costas e pegada.",
+            tag: "Pegada",
+          },
+          {
+            nome: "Flexões (Push-ups)",
+            desc: "Resistência para membros superiores.",
+            tag: "Resistência",
+          },
+          {
+            nome: "Burpees",
+            desc: "Condicionamento cardiovascular e explosão.",
+            tag: "Cardio",
+          },
+        ],
+        dieta: [
+          {
+            hora: "07:30",
+            titulo: "Café da Manhã",
+            desc: "2 Pães franceses (combustível para treino pesado), 3 Ovos inteiros, 1 Fatia de queijo, Café preto.",
+          },
+          {
+            hora: "10:30",
+            titulo: "Lanche da Manhã",
+            desc: "1 Fruta grande (Banana, Maçã ou Mamão), 3 colheres de Aveia, 1 copo de Iogurte comum.",
+          },
+          {
+            hora: "12:30",
+            titulo: "Almoço (Prato de Pedreiro)",
+            desc: "3-4 colh. Arroz, 1 concha Feijão, Proteína (Mão cheia: 2 bifes de frango ou gado), Salada completa, Sobremesa: 1 Laranja.",
+          },
+          {
+            hora: "16:00",
+            titulo: "Pré-Treino (Explosão BJJ)",
+            desc: "1 Pão com doce de leite ou mel (energia rápida) OU 1 Banana com aveia. Suplementos: 5g de Creatina.",
+          },
+          {
+            hora: "Imediato",
+            titulo: "Pós-Treino Imediato",
+            desc: "1 shake de Whey + 1 bananinha passa ou 200ml de suco de uva integral (repõe glicogênio muscular).",
+          },
+          {
+            hora: "20:30",
+            titulo: "Jantar (Recuperação)",
+            desc: "2-3 colh. Arroz, 2 bifes de frango/carne ou 3 ovos cozidos, Batata inglesa/abóbora, Vegetais verdes.",
+          },
+          {
+            hora: "Ceia",
+            titulo: "Antes de Dormir",
+            desc: "1 xícara de leite quente com canela, 3 a 4 Bolachas tipo Maria ou Água e Sal (evita o catabolismo).",
+          },
+        ],
+      };
+    </script>
+
+    <script>
+      // 1. GERENCIADOR DE ROTAS SPA NATIVO
+      const navLinks = document.querySelectorAll(".nav-link");
+      const pages = document.querySelectorAll(".page-content");
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetPageId = link.getAttribute("data-target");
+
+          // Altera classes ativas nos links
+          navLinks.forEach(
+            (l) =>
+              (l.className =
+                "nav-link flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200 rounded-xl font-medium transition"),
+          );
+          link.className =
+            "nav-link flex items-center gap-3 px-4 py-3 text-indigo-400 bg-indigo-600/10 rounded-xl font-medium border border-indigo-500/20 transition";
+
+          // Altera visualização de páginas
+          pages.forEach((page) => page.classList.remove("active"));
+          document.getElementById(targetPageId).classList.add("active");
+
+          // Atualiza Título Dinamicamente
+          const titles = {
+            "page-dashboard": [
+              "Painel de Performance",
+              "Consolidado de rotinas híbridas.",
+            ],
+            "page-academia": [
+              "Preparação Física",
+              "Exercícios focados em mecânica de luta e prevenção.",
+            ],
+            "page-dieta": [
+              "Planejamento Alimentar",
+              "Distribuição calórica estruturada para performance.",
+            ],
+          };
+          document.getElementById("main-title").innerText =
+            titles[targetPageId][0];
+          document.getElementById("main-subtitle").innerText =
+            titles[targetPageId][1];
+        });
+      });
+
+      // 2. MOTOR DE SINCRONIZAÇÃO E LEITURA DE ARQUIVOS
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("pdf-input");
+
+      dropzone.addEventListener("click", () => fileInput.click());
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) handleFileProcessing(e.target.files[0]);
+      });
+
+      function handleFileProcessing(file) {
+        // Inicia estados de UI carregando
+        document.getElementById("upload-text").innerText =
+          "Analisando metadados...";
+        document.getElementById("upload-icon").className =
+          "w-6 h-6 mx-auto text-indigo-500 animate-spin";
+
+        // Simulação de processamento assíncrono (I/O) de 1.2 segundos
+        setTimeout(() => {
+          // Atualiza Badge Global de Status
+          const badge = document.getElementById("sync-badge");
+          badge.className =
+            "bg-emerald-950/50 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-semibold text-emerald-400 flex items-center gap-2 max-w-fit";
+          document.getElementById("sync-dot").className =
+            "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+          document.getElementById("sync-status-text").innerText =
+            "Sincronizado com PDF";
+
+          // Reseta Área de Upload
+          document.getElementById("upload-text").innerText =
+            "Arquivo Atualizado!";
+          document.getElementById("upload-icon").className =
+            "w-6 h-6 mx-auto text-emerald-500";
+
+          // Renderiza os dados populados
+          renderExercises();
+          renderDiet();
+        }, 1200);
+      }
+
+      // 3. RENDERIZADORES DE COMPONENTES
+      function renderExercises() {
+        const grid = document.getElementById("exercise-grid");
+        document.getElementById("exercise-count").innerText =
+          `${databaseMock.exercicios.length} Exercícios`;
+        grid.innerHTML = databaseMock.exercicios
+          .map(
+            (ex) => `
+                <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl hover:border-amber-500/30 transition flex flex-col justify-between gap-2">
+                    <div>
+                        <div class="flex justify-between items-start gap-2 mb-1">
+                            <span class="font-bold text-slate-200 text-sm">${ex.nome}</span>
+                            <span class="text-[10px] bg-amber-500/10 text-amber-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-wider whitespace-nowrap">${ex.tag}</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">${ex.desc}</p>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function renderDiet() {
+        const timeline = document.getElementById("diet-timeline");
+        document.getElementById("diet-count").innerText =
+          `${databaseMock.dieta.length} Janelas`;
+        timeline.innerHTML = databaseMock.dieta
+          .map(
+            (item) => `
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-md flex gap-4 items-start border-l-2 hover:border-l-indigo-500 transition">
+                    <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 font-mono text-xs font-bold text-indigo-400 text-center min-w-[75px]">
+                        ${item.hora}
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-200 text-sm">${item.titulo}</h4>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">${item.desc}</p>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      // Inicializa ícones na primeira carga
       lucide.createIcons();
     </script>
   </body>
